@@ -1,4 +1,6 @@
 module Main where
+import Data.List
+import Data.Typeable
 
 width, height :: Int
 width = 80 -- tam da linha
@@ -9,17 +11,34 @@ type Cells = [Pos] -- coordenadas das células
 
 data Cell = L | D | Z deriving Show -- Define como uma célula pode ser
 
+rightList (x:y:rest) = (x,y) : rightList (y:rest)
+rightList _ = []
 
--- obter as 8 posições vizinhas
-neighbs :: Pos -> [Pos]
-neighbs (x,y) = map wrap [(x-1,y-1), (x,y-1),
-                          (x+1,y-1), (x-1,y),
-                          (x+1,y) , (x-1,y+1),
-                          (x,y+1) , (x+1,y+1)]
+right m = m >>= rightList
 
--- garantir que uma posição está dentro do tabuleiro
-wrap :: Pos -> Pos
-wrap (x,y) = ((x-1) `mod` width + 1, (y-1) `mod` height + 1)
+swap (x,y) = (y,x)
+co direction = map swap . direction
+left = co right
+
+down = right . transpose
+up   = co down
+
+downRight (xs:ys:rest) = zip xs (drop 1 ys) ++ downRight (ys:rest)
+downRight _            = []
+upLeft = co downRight
+
+upRight  = downRight . reverse
+downLeft = co upRight
+
+allDirections = [right, left, up, down,
+                 downRight, upLeft, upRight, downLeft]
+neighbors m = allDirections >>= ($m) 
+
+-- Retorna a posição de um elemento x numa lista
+positions  :: Eq a => a -> [a] -> [Int]
+positions x = map fst . filter ((x ==) . snd) . zip [0..]
+
+-------------------------------------------------------------
 
 -- Cria a matriz
 initMatrix :: Int -> Int -> IO [[String]]
@@ -47,26 +66,28 @@ getExactSize lineSplit width = do
   else 
     take width lineSplit
 
-printMatrix :: Int -> Int -> [[String]] -> String
-printMatrix 1 width (x:[]) = 
-  do
-    show x
-    --show ['2']
-    --printVector width x
-printMatrix height width (x:xs) = 
-  do
-    show x
-    --show ['1']
-    --printVector width x
-    printMatrix (height-1) width xs
+printMatrix :: [[String]] -> IO ()
+printMatrix (x:[]) = do 
+    printValue x
+printMatrix (x:rest) =
+  do 
+    printValue x
+    printMatrix rest
 
-printVector :: Int -> [String] -> String
-printVector 0 [] = "|"
-printVector width (x:xs) =
+printValue :: [String] -> IO()
+printValue [] = do putStrLn("|")
+printValue (x:rest) =
   do
-    show x
-    printVector (width-1) xs 
+    putStr ("|")
+    putStr(show x)
+    printValue rest
 
+printDash :: Int -> [Char] -> IO()
+printDash 0 char = do putStrLn(char)
+printDash n char =
+  do
+    putStr(char)
+    printDash (n-1) char
 
 main :: IO ()
 main = do
@@ -80,10 +101,20 @@ main = do
 
   putStrLn ("Número de iterações: ")
   iteration <- getLine
-  let getLineAsNumber = read gridSize :: Int
+  let iterationAsNumber = read iteration :: Int
 
   putStrLn ("Tamanho da grade: " ++ gridSize)
-  
-  putStrLn ("Matriz: \n" ++ show matrix)
 
+  putStrLn ("Matriz: \n" ++ show matrix)
+  putStrLn ("\nTipo da matriz: " ++ show (typeOf matrix))
+  -- putStrLn ("Matriz com sort: \n" ++ show (sort (neighbors matrix)))
+  putStrLn ("\nPrint criado para matriz:")
+  printDash (gridSizeAsNumber*4) "-"
+  printMatrix matrix
+  printDash (gridSizeAsNumber*4) "-"
+  
   putStrLn ("Iteração: " ++ iteration)
+
+  let s  = positions 'L' "foobaraboof"
+
+  putStrLn (show s) 
