@@ -21,14 +21,30 @@ neighbs (x,y) = map wrap [(x-1,y-1), (x,y-1),
 wrap :: Pos -> Pos
 wrap (x,y) = ((x-1) `mod` width + 1, (y-1) `mod` height + 1)
 
--- repeatNtimes :: String -> IO [Char]
-repeatNTimes 0 = return []
-repeatNTimes n =
+-- Cria a matriz
+initMatrix :: Int -> Int -> IO [[String]]
+initMatrix 1 width = 
+  do 
+    line <- getLine
+    let lineSplit = words line -- Splita a linha de input do usuario
+    let exactSize = lineSplit ++ take (width - (length lineSplit)) (repeat "D") -- Calcula o tamanho exato que a matriz precisa ter
+    return [exactSize]
+initMatrix height width =
   do
-  line <- getLine
-  nextLine <- repeatNTimes (n-1)
-  return (line:nextLine)
+    line <- getLine
+    let lineSplit = words line -- Splita a linha de input do usuario
+    let exactSize = lineSplit ++ take (width - (length lineSplit)) (repeat "D")-- Calcula o tamanho exato que a matriz precisa ter
+    nextLine <- initMatrix (height-1) width
+    return (exactSize:nextLine)
   
+
+
+{- printNTimes :: Int -> Int -> [[String]] -> IO String
+printNTimes 1 width (vector:[]) = show vector
+printNTimes height width (x:xs) =
+  do
+    show x
+    printNTimes (height-1) width xs -}
 
 main :: IO ()
 main = do
@@ -38,12 +54,14 @@ main = do
   let gridSizeAsNumber = read gridSize :: Int
 
   putStrLn ("Celulas da grid: ")
-  matrix <- getLine
+  matrix <- initMatrix gridSizeAsNumber gridSizeAsNumber
 
   putStrLn ("Número de iterações: ")
   iteration <- getLine
   let getLineAsNumber = read gridSize :: Int
 
   putStrLn ("Tamanho da grade: " ++ gridSize)
-  putStrLn ("Matriz: \n" ++ matrix)
+  
+  putStrLn ("Matriz: \n" ++ show matrix )
+
   putStrLn ("Iteração: " ++ iteration)
