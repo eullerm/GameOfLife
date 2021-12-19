@@ -7,7 +7,7 @@ height = 24 -- tam da coluna
 type Pos = (Int,Int) -- coluna, linha
 type Cells = [Pos] -- coordenadas das células
 
-data Cell = L Int | D Int | Z Int -- Define como uma célula pode ser
+data Cell = L | D | Z deriving Show -- Define como uma célula pode ser
 
 
 -- obter as 8 posições vizinhas
@@ -27,24 +27,46 @@ initMatrix 1 width =
   do 
     line <- getLine
     let lineSplit = words line -- Splita a linha de input do usuario
-    let exactSize = lineSplit ++ take (width - (length lineSplit)) (repeat "D") -- Calcula o tamanho exato que a matriz precisa ter
+    let exactSize = getExactSize lineSplit width
     return [exactSize]
 initMatrix height width =
   do
     line <- getLine
     let lineSplit = words line -- Splita a linha de input do usuario
-    let exactSize = lineSplit ++ take (width - (length lineSplit)) (repeat "D")-- Calcula o tamanho exato que a matriz precisa ter
+    let exactSize = getExactSize lineSplit width
     nextLine <- initMatrix (height-1) width
     return (exactSize:nextLine)
-  
 
+-- Calcula o tamanho exato que cada vetor da matriz precisa ter
+getExactSize :: [String] -> Int -> [String]
+getExactSize lineSplit width = do
+  if(length lineSplit == width)
+    then lineSplit
+  else if(length lineSplit < width)
+    then lineSplit ++ take (width - (length lineSplit)) (repeat "D")
+  else 
+    take width lineSplit
 
-{- printNTimes :: Int -> Int -> [[String]] -> IO String
-printNTimes 1 width (vector:[]) = show vector
-printNTimes height width (x:xs) =
+printMatrix :: Int -> Int -> [[String]] -> String
+printMatrix 1 width (x:[]) = 
   do
     show x
-    printNTimes (height-1) width xs -}
+    --show ['2']
+    --printVector width x
+printMatrix height width (x:xs) = 
+  do
+    show x
+    --show ['1']
+    --printVector width x
+    printMatrix (height-1) width xs
+
+printVector :: Int -> [String] -> String
+printVector 0 [] = "|"
+printVector width (x:xs) =
+  do
+    show x
+    printVector (width-1) xs 
+
 
 main :: IO ()
 main = do
@@ -62,6 +84,6 @@ main = do
 
   putStrLn ("Tamanho da grade: " ++ gridSize)
   
-  putStrLn ("Matriz: \n" ++ show matrix )
+  putStrLn ("Matriz: \n" ++ show matrix)
 
   putStrLn ("Iteração: " ++ iteration)
