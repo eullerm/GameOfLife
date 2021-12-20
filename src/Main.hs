@@ -6,7 +6,6 @@ width, height :: Int
 width = 80 -- tam da linha
 height = 24 -- tam da coluna
 
-type Pos = (Int,Int) -- coluna, linha
 type Cells = [Pos] -- coordenadas das células
 
 data Cell = L | D | Z deriving Show -- Define como uma célula pode ser
@@ -40,47 +39,59 @@ positions x = map fst . filter ((x ==) . snd) . zip [0..]
 
 -------------------------------------------------------------
 
+type Pos = (Int,Int) -- coluna, linha
+type Row = [(Pos, String)]
+type Matrix = [Row]
+
 -- Cria a matriz
-initMatrix :: Int -> Int -> IO [[String]]
+initMatrix :: Int -> Int -> IO Matrix
 initMatrix 1 width = 
   do 
     line <- getLine
     let lineSplit = words line -- Splita a linha de input do usuario
-    let exactSize = getExactSize lineSplit width
+    let exactSize = getExactSize lineSplit 1 width
     return [exactSize]
 initMatrix height width =
   do
     line <- getLine
     let lineSplit = words line -- Splita a linha de input do usuario
-    let exactSize = getExactSize lineSplit width
+    let exactSize = getExactSize lineSplit height width
     nextLine <- initMatrix (height-1) width
     return (exactSize:nextLine)
 
 -- Calcula o tamanho exato que cada vetor da matriz precisa ter
-getExactSize :: [String] -> Int -> [String]
-getExactSize lineSplit width = do
-  if(length lineSplit == width)
-    then lineSplit
-  else if(length lineSplit < width)
-    then lineSplit ++ take (width - (length lineSplit)) (repeat "D")
-  else 
-    take width lineSplit
+getExactSize :: [String] -> Int -> Int -> Row
+getExactSize lineSplit row columns= 
+  do
+    let vetRow = take columns (repeat row)
+    let vetColumn = [1..columns]
+    let pos = zip vetRow vetColumn 
+    let exactSize = take columns lineSplit
+    let incrementSize = lineSplit ++ take (columns - (length lineSplit)) (repeat "D")
+    if(length lineSplit == columns)
+      then (zip pos exactSize)
+    else if(length lineSplit < columns)
+      then (zip pos incrementSize)
+    else
+      zip pos exactSize
 
-printMatrix :: [[String]] -> IO ()
-printMatrix (x:[]) = do 
-    printValue x
-printMatrix (x:rest) =
+
+printMatrix :: Matrix -> IO ()
+printMatrix (vet:[]) = 
   do 
-    printValue x
+    printValue vet
+printMatrix (vet:rest) =
+  do 
+    printValue vet
     printMatrix rest
 
-printValue :: [String] -> IO()
+printValue :: Row -> IO()
 printValue [] = do putStrLn("|")
-printValue (x:rest) =
+printValue (((r,c), value):rest) =
   do
     putStr ("|")
-    putStr(show x)
-    printValue rest
+    putStr(show value)
+    printValue rest 
 
 printDash :: Int -> [Char] -> IO()
 printDash 0 char = do putStrLn(char)
