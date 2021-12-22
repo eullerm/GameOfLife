@@ -30,7 +30,7 @@ version = Version [0,1,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
 bindir     = "C:\\Users\\Euller\\Documents\\GitHub\\GameOfLife\\.stack-work\\install\\57b6284f\\bin"
-libdir     = "C:\\Users\\Euller\\Documents\\GitHub\\GameOfLife\\.stack-work\\install\\57b6284f\\lib\\x86_64-windows-ghc-8.10.7\\GameOfLife-0.1.0.0-1RteoW40svaJFZypVECTF7-GameOfLife"
+libdir     = "C:\\Users\\Euller\\Documents\\GitHub\\GameOfLife\\.stack-work\\install\\57b6284f\\lib\\x86_64-windows-ghc-8.10.7\\GameOfLife-0.1.0.0-9dqiswGD8sk6htlOqckhtC-GameOfLife"
 dynlibdir  = "C:\\Users\\Euller\\Documents\\GitHub\\GameOfLife\\.stack-work\\install\\57b6284f\\lib\\x86_64-windows-ghc-8.10.7"
 datadir    = "C:\\Users\\Euller\\Documents\\GitHub\\GameOfLife\\.stack-work\\install\\57b6284f\\share\\x86_64-windows-ghc-8.10.7\\GameOfLife-0.1.0.0"
 libexecdir = "C:\\Users\\Euller\\Documents\\GitHub\\GameOfLife\\.stack-work\\install\\57b6284f\\libexec\\x86_64-windows-ghc-8.10.7\\GameOfLife-0.1.0.0"

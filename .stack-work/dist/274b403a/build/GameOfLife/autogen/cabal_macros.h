@@ -22,6 +22,17 @@
   (major1) == 4 && (major2) == 14 && (minor) <= 3)
 #endif /* MIN_VERSION_base */
 
+/* package split-0.2.3.4 */
+#ifndef VERSION_split
+#define VERSION_split "0.2.3.4"
+#endif /* VERSION_split */
+#ifndef MIN_VERSION_split
+#define MIN_VERSION_split(major1,major2,minor) (\
+  (major1) <  0 || \
+  (major1) == 0 && (major2) <  2 || \
+  (major1) == 0 && (major2) == 2 && (minor) <= 3)
+#endif /* MIN_VERSION_split */
+
 /* tool gcc-9.2.0 */
 #ifndef TOOL_VERSION_gcc
 #define TOOL_VERSION_gcc "9.2.0"
@@ -111,7 +122,7 @@
 #endif /* MIN_TOOL_VERSION_strip */
 
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "GameOfLife-0.1.0.0-1RteoW40svaJFZypVECTF7-GameOfLife"
+#define CURRENT_COMPONENT_ID "GameOfLife-0.1.0.0-9dqiswGD8sk6htlOqckhtC-GameOfLife"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.1.0.0"
