@@ -191,7 +191,5 @@ main = do
   printDash (4 * gridSizeAsNumber!!1 ) "-"
   printMatrix matrixResult
   printDash (4 * gridSizeAsNumber!!1 ) "-"
+
   
-
-
-
