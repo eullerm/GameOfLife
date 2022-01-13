@@ -24,7 +24,7 @@ Projeto desenvolvido na matéria de Linguagem de Programação.
 </p>
 <img src="image/image1.png" height="400">
 <p>
-    Caso alguma celula da matriz não seja passada o código inicia ela como morta.
+    Caso alguma célula da matriz não seja passada o código inicia ela como morta.
 </p><br>
 
 ## Instalação
@@ -56,14 +56,14 @@ $ curl -sSL https://get.haskellstack.org/ | sh
         <li> 100x3</li>
     </ul>
     Sendo o primeiro valor a quantidade de linhas da matriz e o segundo de colunas, esses valores devem ser sempre separados pela letra <strong>X</strong> ou <strong>x</strong>.<br>
-    Para criar a matriz é necessário que cada celula esteja separada por espaço e a cada nova linha ocorra uma quebra de linha, por exemplo:<br>
+    Para criar a matriz é necessário que cada célula esteja separada por espaço e a cada nova linha ocorra uma quebra de linha, por exemplo:<br>
     V V V<br>
     M M M<br>
     Z Z Z<br>
-    Caso alguma celula não seja iniciada o programa considerará ela como morta, por exemplo em uma matriz 3x3 dado o seguinte input do usuário:<br>
+    Caso alguma célula não seja iniciada o programa considerará ela como morta, por exemplo em uma matriz 3x3 dado o seguinte input do usuário:<br>
     V V V<br>
     Z Z<br>
-    O programa criar a matriz da seguinte forma:<br>
+    O programa criará a matriz da seguinte forma:<br>
     V V V<br>
     Z Z M<br>
     M M M<br>
