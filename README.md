@@ -1,6 +1,5 @@
 # GameOfLife
 
-forthebadge made-with-python
 
 <a href="https://github.com/eullerm">Euller Macena</a>
 
