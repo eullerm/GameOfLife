@@ -65,3 +65,9 @@ packages:
 #
 # Allow a newer minor version of GHC than the snapshot specifies
 # compiler-check: newer-minor
+
+# LTS-18.18 tem Win32-2.6.2.1 (< 2.13.1); sem isto o mintty falha ao buildar
+# (o módulo de backport System.Console.MinTTY.Win32 só é compilado com a flag desligada)
+flags:
+  mintty:
+    Win32-2-13-1: false
