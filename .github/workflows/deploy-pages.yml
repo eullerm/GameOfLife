@@ -2,7 +2,7 @@ name: Deploy no GitHub Pages
 
 on:
   push:
-    branches: [main, gameOfLifeWeb]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
