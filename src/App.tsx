@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Board from './components/Board';
-import { coreTransport } from './core/transport';
+import { coreTransport, describeCore } from './core/transport';
 import type { CellState } from './core/transport';
 
 const DEFAULT_ROWS = 20;
@@ -32,7 +32,7 @@ function App() {
   const [intervalMs, setIntervalMs] = useState(DEFAULT_INTERVAL_MS);
   const [generation, setGeneration] = useState(0);
   const [message, setMessage] = useState('');
-  const [apiOnline, setApiOnline] = useState<boolean | null>(null);
+  const [coreReady, setCoreReady] = useState<boolean | null>(null);
 
   // Mantém a última matriz à mão para o loop de reprodução não depender do estado do React
   const cellsRef = useRef(cells);
@@ -45,7 +45,7 @@ function App() {
   useEffect(() => {
     let active = true;
     void coreTransport.health().then((online) => {
-      if (active) setApiOnline(online);
+      if (active) setCoreReady(online);
     });
     return () => {
       active = false;
@@ -119,9 +119,9 @@ function App() {
     setIsRunning(false);
   };
 
-  const apiLabel = apiOnline === null ? 'verificando...' : apiOnline ? 'online' : 'offline (rode npm run api)';
-  const apiClass =
-    apiOnline === null ? 'app__api app__api--checking' : apiOnline ? 'app__api app__api--online' : 'app__api app__api--offline';
+  const coreLabel = coreReady === null ? 'carregando...' : coreReady ? 'pronto' : 'indisponível';
+  const coreClass =
+    coreReady === null ? 'app__api app__api--checking' : coreReady ? 'app__api app__api--online' : 'app__api app__api--offline';
 
   return (
     <div className="app">
@@ -129,9 +129,12 @@ function App() {
         <h1>Game of Life - Núcleo Haskell</h1>
         <p className="app__subtitle">
           O motor é o programa Haskell do trabalho da matéria de Linguagem de Programação (UFF - Niterói, 2021-2022), de
-          Euller Macena e Malkai Oliveira. O frontend conversa com ele por HTTP.
+          Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo no navegador (WASM) e também sabe conversar
+          com ele por HTTP.
         </p>
-        <span className={apiClass}>API Haskell: {apiLabel}</span>
+        <span className={coreClass}>
+          {describeCore()}: {coreLabel}
+        </span>
       </header>
 
       <Board cells={cells} onToggle={handleToggle} />
@@ -141,18 +144,18 @@ function App() {
           type="button"
           className="btn btn--primary"
           onClick={() => setIsRunning((running) => !running)}
-          disabled={apiOnline === false}
+          disabled={coreReady === false}
         >
           {isRunning ? 'Pausar' : 'Iniciar'}
         </button>
-        <button type="button" className="btn" onClick={() => void runSteps(1)} disabled={apiOnline === false}>
+        <button type="button" className="btn" onClick={() => void runSteps(1)} disabled={coreReady === false}>
           Próxima geração
         </button>
         <button
           type="button"
           className="btn"
           onClick={() => void runSteps(STABILIZE_STEPS)}
-          disabled={apiOnline === false}
+          disabled={coreReady === false}
         >
           Rodar até estabilizar
         </button>

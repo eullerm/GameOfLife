@@ -6,13 +6,15 @@ UFF - Niterói, 2021-2022
 
 Projeto desenvolvido na matéria de Linguagem de Programação.
 
-O jogo (autômato celular com células mortas, vivas e zumbis) é implementado em Haskell. O frontend em React conversa com esse motor por HTTP e foi desenvolvido por [Euller Macena](https://www.linkedin.com/in/euller-macena/).
+O jogo (autômato celular com células mortas, vivas e zumbis) é implementado em Haskell. O frontend em React roda esse mesmo motor no navegador (compilado para WebAssembly) e também sabe conversar com ele por HTTP; o frontend foi desenvolvido por [Euller Macena](https://www.linkedin.com/in/euller-macena/).
 
 # Stack
 
 - Haskell - Linguagem funcional
-- Visual Code - Editor de texto
+- WebAssembly (GHC wasm backend) - para rodar o núcleo no navegador
+- React + Vite + TypeScript - frontend
 - Stack - Ferramenta de build
+- Visual Code - Editor de texto
 
 # APP
 
@@ -94,13 +96,39 @@ Cada célula tem oito vizinhos (incluindo as diagonais); as bordas não "dão a 
 
 O que uma célula zumbi faz com uma viva: um único zumbi vizinho **infecta** a célula viva, que vira Zumbi independentemente da quantidade de vizinhos vivos. Essa infecção tem prioridade sobre as regras de nascimento e morte — por isso uma célula morta com 3 vizinhos vivos ainda nasce normalmente, mesmo que também toque um zumbi.
 
-# Frontend (React) + API local
+# Frontend (React)
 
-O motor Haskell continua sendo o mesmo do trabalho (`core-haskell/src/GameOfLife.hs`). Para o frontend, ele também é exposto como um serviço HTTP local pelo executável `api`, e o React consome esse serviço.
+O motor Haskell continua sendo o mesmo do trabalho (`core-haskell/src/GameOfLife.hs`), e o React usa uma das duas implementações da mesma interface `CoreTransport` (`src/core/transport.ts`):
+
+- **WASM (padrão)** — o mesmo código Haskell compilado para WebAssembly roda no próprio navegador. Não precisa de backend, então o GitHub Pages consegue hospedar o app inteiro.
+- **HTTP** — o núcleo é exposto como serviço local pelo executável `api` e o React consome via HTTP. Útil para comparar/rodar o backend separado.
 
 O frontend foi desenvolvido por [Euller Macena](https://www.linkedin.com/in/euller-macena/).
 
-São dois terminais:
+## Rodar em modo WASM (padrão)
+
+```sh
+$ npm install
+$ npm run dev
+```
+
+Não precisa de backend: o `.wasm` já vem versionado em `public/gameoflife.{wasm,js}`.
+
+## Núcleo em WebAssembly
+
+O binário `public/gameoflife.wasm` e o glue `public/gameoflife.js` são gerados a partir do Haskell por `core-haskell/wasm/build.sh`, que usa o backend wasm do GHC (`wasm32-wasi-ghc`, do [ghc-wasm-meta](https://gitlab.haskell.org/ghc/ghc-wasm-meta)) num alvo WASI *reactor*, com o JavaScript FFI exportando `runSteps`.
+
+O build exige Linux/WSL2 com o toolchain `~/.ghc-wasm` instalado (não há suporte no host Windows):
+
+```sh
+$ npm run wasm        # wsl -d Ubuntu -- bash core-haskell/wasm/build.sh
+```
+
+Os artefatos gerados são versionados no repositório (ficam em `public/`), para que `npm run build` e o GitHub Pages funcionem sem precisar do toolchain. Rode `npm run wasm` novamente só quando o núcleo Haskell (`core-haskell/src`) mudar.
+
+## Modo HTTP (opcional)
+
+Para usar o backend Haskell separado em vez do WASM, defina `VITE_CORE=http`. São dois terminais:
 
 Terminal 1 — backend Haskell (dentro de `core-haskell/`, ou pela raiz com `npm run api`):
 
@@ -116,10 +144,10 @@ Terminal 2 — frontend (na raiz do repositório):
 
 ```sh
 $ npm install
-$ npm run dev
+$ VITE_CORE=http npm run dev
 ```
 
-O Vite faz proxy de `/api` para o backend (veja `vite.config.ts`), então não há problema de CORS.
+O Vite faz proxy de `/api` para o backend (veja `vite.config.ts`), então não há problema de CORS. Para apontar para um backend remoto, use `VITE_API_URL`.
 
 ## API HTTP
 
@@ -143,10 +171,11 @@ Regras de validação: grade retangular de até 200x200, células entre 0 e 2, `
 
 ```
 src/
-  core/transport.ts     fachada de acesso ao núcleo (hoje HTTP local)
+  core/transport.ts     fachada de acesso ao núcleo (escolhe wasm ou http)
+  core/wasmCore.ts      núcleo Haskell em WASM, rodando no navegador
   components/Board.tsx  tabuleiro em canvas
   App.tsx               estado da grade, controles e loop de reprodução
   index.css             estilos da aplicação
 ```
 
-O acesso ao núcleo fica atrás de `CoreTransport` (`src/core/transport.ts`). Trocar a implementação (por exemplo, para uma versão WebAssembly do Haskell no futuro) não exige mudanças nos componentes.
+O acesso ao núcleo fica atrás de `CoreTransport` (`src/core/transport.ts`). A implementação padrão roda o Haskell em WASM (`src/core/wasmCore.ts`); a alternativa fala por HTTP. Trocar entre elas (ou adicionar outra) não exige mudanças nos componentes.

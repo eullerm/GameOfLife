@@ -17,6 +17,13 @@ dist-ssr
 dist-newstyle/
 core-haskell/.stack-work/
 
+# Saídas do build wasm (GHC chamado direto)
+*.o
+*.hi
+
+# Cache do Vite
+.vite/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

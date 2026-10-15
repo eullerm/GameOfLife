@@ -8,9 +8,11 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "api": "cd core-haskell && stack build && stack exec api"
+    "api": "cd core-haskell && stack build && stack exec api",
+    "wasm": "wsl -d Ubuntu -- bash core-haskell/wasm/build.sh"
   },
   "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.4.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },
