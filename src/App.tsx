@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import Accordion from './components/Accordion';
 import Board from './components/Board';
 import { coreTransport, describeCore } from './core/transport';
 import type { CellState } from './core/transport';
@@ -206,53 +207,47 @@ function App() {
         <span className="legend__hint">Clique numa célula para alternar Morta -&gt; Viva -&gt; Zumbi</span>
       </div>
 
-      <details className="rules">
-        <summary>Regras do jogo</summary>
-        <div className="rules__body">
-          <p>
-            Cada célula tem oito vizinhos (incluindo as diagonais) e as bordas não dão a volta no tabuleiro. Em cada
-            geração contam-se os vizinhos vivos (<code>a</code>) e os vizinhos zumbis (<code>z</code>):
-          </p>
-          <ul>
-            <li>
-              <strong>Morta</strong> — nasce <strong>Viva</strong> quando tem exatamente 3 vizinhos vivos; caso
-              contrário continua morta (zumbi não afeta célula morta).
-            </li>
-            <li>
-              <strong>Viva</strong> — com pelo menos 1 vizinho <strong>zumbi</strong> vira <strong>Zumbi</strong> (esta
-              regra é aplicada antes das mortes); senão morre com menos de 2 ou com mais de 3 vizinhos vivos; senão
-              continua viva.
-            </li>
-            <li>
-              <strong>Zumbi</strong> — sem nenhum vizinho vivo volta a ser <strong>Morta</strong>; caso contrário
-              continua zumbi (não morre por falta nem por excesso de vizinhos e não transforma células mortas).
-            </li>
-          </ul>
-          <p>
-            A infecção zumbi tem prioridade: uma célula viva com um único zumbi ao lado vira Zumbi independentemente da
-            quantidade de vizinhos vivos, mas uma célula morta com 3 vizinhos vivos ainda nasce, mesmo que também toque
-            um zumbi.
-          </p>
-        </div>
-      </details>
+      <Accordion title="Regras do jogo">
+        <p>
+          Cada célula tem oito vizinhos (incluindo as diagonais) e as bordas não dão a volta no tabuleiro. Em cada
+          geração contam-se os vizinhos vivos (<code>a</code>) e os vizinhos zumbis (<code>z</code>):
+        </p>
+        <ul>
+          <li>
+            <strong>Morta</strong> — nasce <strong>Viva</strong> quando tem exatamente 3 vizinhos vivos; caso
+            contrário continua morta (zumbi não afeta célula morta).
+          </li>
+          <li>
+            <strong>Viva</strong> — com pelo menos 1 vizinho <strong>zumbi</strong> vira <strong>Zumbi</strong> (esta
+            regra é aplicada antes das mortes); senão morre com menos de 2 ou com mais de 3 vizinhos vivos; senão
+            continua viva.
+          </li>
+          <li>
+            <strong>Zumbi</strong> — sem nenhum vizinho vivo volta a ser <strong>Morta</strong>; caso contrário
+            continua zumbi (não morre por falta nem por excesso de vizinhos e não transforma células mortas).
+          </li>
+        </ul>
+        <p>
+          A infecção zumbi tem prioridade: uma célula viva com um único zumbi ao lado vira Zumbi independentemente da
+          quantidade de vizinhos vivos, mas uma célula morta com 3 vizinhos vivos ainda nasce, mesmo que também toque
+          um zumbi.
+        </p>
+      </Accordion>
 
-      <details className="rules">
-        <summary>Sobre o projeto</summary>
-        <div className="rules__body">
-          <p>
-            O motor é o programa Haskell do trabalho da matéria de Linguagem de Programação (UFF - Niterói, 2021-2022), de
-            Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo inteiramente no navegador, compilado para
-            WebAssembly — sem servidor.
-          </p>
-          <p>
-            Frontend desenvolvido por{' '}
-            <a href="https://www.linkedin.com/in/euller-macena/" target="_blank" rel="noopener noreferrer">
-              Euller Macena
-            </a>
-            .
-          </p>
-        </div>
-      </details>
+      <Accordion title="Sobre o projeto">
+        <p>
+          O motor é o programa Haskell do trabalho da matéria de Linguagem de Programação (UFF - Niterói, 2021-2022), de
+          Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo inteiramente no navegador, compilado para
+          WebAssembly — sem servidor.
+        </p>
+        <p>
+          Frontend desenvolvido por{' '}
+          <a href="https://www.linkedin.com/in/euller-macena/" target="_blank" rel="noopener noreferrer">
+            Euller Macena
+          </a>
+          .
+        </p>
+      </Accordion>
     </div>
   );
 }

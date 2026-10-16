@@ -210,40 +210,51 @@ h1 {
   background: var(--panel);
   color: var(--muted);
   font-size: 14px;
-  interpolate-size: allow-keywords;
 }
 
-.rules::details-content {
-  block-size: 0;
-  overflow: hidden;
-  transition: block-size 250ms ease;
-}
-
-.rules[open]::details-content {
-  block-size: auto;
-}
-
-.rules summary {
+.rules__summary {
+  display: block;
+  width: 100%;
   padding: 10px 14px;
+  border: none;
+  background: none;
   color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
   cursor: pointer;
   user-select: none;
 }
 
-.rules__body {
-  padding: 0 14px 12px;
+.rules__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 250ms ease;
 }
 
-.rules__body p {
+.rules--open .rules__panel {
+  grid-template-rows: 1fr;
+}
+
+.rules__panel-inner {
+  overflow: hidden;
+  padding: 0 14px;
+}
+
+.rules__panel-inner > :last-child {
+  margin-bottom: 12px;
+}
+
+.rules__panel-inner p {
   margin: 0 0 10px;
 }
 
-.rules__body ul {
+.rules__panel-inner ul {
   margin: 0 0 12px;
   padding-left: 20px;
 }
 
-.rules__body li {
+.rules__panel-inner li {
   margin-bottom: 6px;
 }
 
