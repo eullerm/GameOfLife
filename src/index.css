@@ -30,6 +30,16 @@ body {
   padding: 32px 16px;
 }
 
+a {
+  color: var(--text);
+  text-decoration-color: var(--muted);
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
 .app {
   display: flex;
   flex-direction: column;
