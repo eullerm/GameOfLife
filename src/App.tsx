@@ -126,11 +126,16 @@ function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <h1>Game of Life - Núcleo Haskell</h1>
+        <h1>Game of Life</h1>
         <p className="app__subtitle">
           O motor é o programa Haskell do trabalho da matéria de Linguagem de Programação (UFF - Niterói, 2021-2022), de
-          Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo no navegador (WASM) e também sabe conversar
-          com ele por HTTP.
+          Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo inteiramente no navegador, compilado para
+          WebAssembly — sem servidor.
+        </p>
+        <p className="app__subtitle">
+          <a href="https://github.com/eullerm/GameOfLife" target="_blank" rel="noopener noreferrer">
+            Ver código no GitHub
+          </a>
         </p>
         <span className={coreClass}>
           {describeCore()}: {coreLabel}

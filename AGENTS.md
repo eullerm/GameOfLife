@@ -2,7 +2,7 @@
 
 Two projects in one repo:
 
-- **Frontend (repo root)**: Vite + React 19 + TypeScript. Entry: `src/main.tsx` -> `src/App.tsx`. Runs the Haskell core in the browser via WebAssembly by default (HTTP is the fallback), through `src/core/transport.ts`.
+- **Frontend (repo root)**: Vite + React 19 + TypeScript. Entry: `src/main.tsx` -> `src/App.tsx`. Runs the Haskell core exclusively in the browser via WebAssembly (no HTTP), through `src/core/transport.ts`.
 - **Haskell core (`core-haskell/`)**: stack project (`stack.yaml` resolver lts-18.18, package `GameOfLife.cabal`). One library (`GameOfLife` = game logic, `GameOfLifeApi` = pure wrapper) and two executables:
   - `GameOfLife` — the original interactive stdin/stdout console program (`core-haskell/src/Main.hs`);
   - `api` — local HTTP server exposing the core (`core-haskell/server/Main.hs`, port **8787**, override with `GOL_API_PORT`).
@@ -10,7 +10,7 @@ Two projects in one repo:
 
 ## Commands (frontend)
 
-- `npm run dev` — dev server (proxies `/api` -> `http://127.0.0.1:8787`, see `vite.config.ts`)
+- `npm run dev` — dev server (no proxy: the app only uses the WASM core)
 - `npm run lint` — ESLint over the whole repo (no separate typecheck script)
 - `npm run build` — `tsc -b && vite build`; this **is** the typecheck step
 - `npm run preview`
@@ -31,7 +31,7 @@ Baseline is currently **green** for `npm run lint` and `npm run build`.
 
 ## How the two halves connect
 
-- The frontend never imports Haskell directly; `src/core/transport.ts` defines `CoreTransport { health(); run(cells, steps) }`, supports `VITE_CORE=wasm|http` and `VITE_API_URL`, and by default runs the Haskell core in the browser via WebAssembly through `src/core/wasmCore.ts`.
+- The frontend never imports Haskell directly; `src/core/transport.ts` defines `CoreTransport { health(); run(cells, steps) }` and only exports the WASM implementation (coreKind is fixed to `wasm`), running the Haskell core in the browser through `src/core/wasmCore.ts`. There is no HTTP transport and no `VITE_CORE`/`VITE_API_URL` switch.
 - API contract: `GET /api/health` -> `ok`; `POST /api/generation` with `{cells: [[Int]], steps: Int}` -> `{cells, iterationsUntilStable, stabilized}` where `stabilized = iterationsUntilStable < steps`. Validation: rectangular grid 1..200 per side, cells 0..2, steps 0..10000; otherwise 400 with `{error: string}`.
 - Cell states: `0 = Morta`, `1 = Viva`, `2 = Zumbi`. The core's rule priority lives in `aliveDeadOrZombie` (`core-haskell/src/GameOfLife.hs`): `V` with any zombie neighbour becomes `Z` before the `a<2`/`a>3` death rules.
 - WASM build: `core-haskell/wasm/GameOfLifeWasm.hs` is the WASI/JSFFI entry (`foreign export javascript "runSteps" ...`) reading a tuple `([[Int]], Int)` and returning a JSON string; `core-haskell/wasm/build.sh` calls `wasm32-wasi-ghc` (needs `~/.ghc-wasm` in WSL2) and `node $LIBDIR/post-link.mjs` to produce `public/gameoflife.{wasm,js}`. Artifacts in `public/` are versioned so Pages builds don't require the toolchain.
