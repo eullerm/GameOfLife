@@ -42,7 +42,10 @@ curl -sSL https://get.haskellstack.org/ | sh
 
 ### Testar
 
+O `stack.yaml` fica dentro de `core-haskell/`, então rode o Stack de lá:
+
 ```sh
+$ cd core-haskell
 $ stack build
 $ stack exec GameOfLife
 ```
@@ -132,6 +135,10 @@ O workflow `.github/workflows/deploy-pages.yml` publica o app no GitHub Pages au
 ## Servidor Haskell (opcional)
 
 O executável `api` (`core-haskell/server/Main.hs`, porta 8787, `GOL_API_PORT` para trocar) continua no projeto e expõe o núcleo por HTTP para uso standalone (por exemplo, testar a API ou integrar outro cliente). O frontend do app **não** usa mais HTTP — ele fala apenas com o núcleo em WebAssembly.
+
+```sh
+$ npm run api         # cd core-haskell && stack build && stack exec api
+```
 
 ## Controles da tela
 
