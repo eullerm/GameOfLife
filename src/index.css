@@ -204,13 +204,23 @@ h1 {
 }
 
 .rules {
-  width: 100%;
-  max-width: 720px;
+  width: min(720px, calc(100vw - 32px));
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--panel);
   color: var(--muted);
   font-size: 14px;
+  interpolate-size: allow-keywords;
+}
+
+.rules::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition: block-size 250ms ease;
+}
+
+.rules[open]::details-content {
+  block-size: auto;
 }
 
 .rules summary {
