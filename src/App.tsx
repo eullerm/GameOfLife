@@ -128,11 +128,6 @@ function App() {
       <header className="app__header">
         <h1>Game of Life</h1>
         <p className="app__subtitle">
-          O motor é o programa Haskell do trabalho da matéria de Linguagem de Programação (UFF - Niterói, 2021-2022), de
-          Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo inteiramente no navegador, compilado para
-          WebAssembly — sem servidor.
-        </p>
-        <p className="app__subtitle">
           <a href="https://github.com/eullerm/GameOfLife" target="_blank" rel="noopener noreferrer">
             Ver código no GitHub
           </a>
@@ -237,6 +232,24 @@ function App() {
             A infecção zumbi tem prioridade: uma célula viva com um único zumbi ao lado vira Zumbi independentemente da
             quantidade de vizinhos vivos, mas uma célula morta com 3 vizinhos vivos ainda nasce, mesmo que também toque
             um zumbi.
+          </p>
+        </div>
+      </details>
+
+      <details className="rules">
+        <summary>Sobre o projeto</summary>
+        <div className="rules__body">
+          <p>
+            O motor é o programa Haskell do trabalho da matéria de Linguagem de Programação (UFF - Niterói, 2021-2022), de
+            Euller Macena e Malkai Oliveira. O frontend roda esse mesmo núcleo inteiramente no navegador, compilado para
+            WebAssembly — sem servidor.
+          </p>
+          <p>
+            Frontend desenvolvido por{' '}
+            <a href="https://www.linkedin.com/in/euller-macena/" target="_blank" rel="noopener noreferrer">
+              Euller Macena
+            </a>
+            .
           </p>
         </div>
       </details>
