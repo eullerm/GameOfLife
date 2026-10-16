@@ -157,6 +157,16 @@ function App() {
     setIsRunning(false);
   };
 
+  const handleToggleRun = () => {
+    if (isRunning) {
+      setIsRunning(false);
+      return;
+    }
+    resetHistory();
+    setMessage('');
+    setIsRunning(true);
+  };
+
   const coreLabel = coreReady === null ? 'carregando...' : coreReady ? 'pronto' : 'indisponível';
   const coreClass =
     coreReady === null ? 'app__api app__api--checking' : coreReady ? 'app__api app__api--online' : 'app__api app__api--offline';
@@ -181,7 +191,7 @@ function App() {
         <button
           type="button"
           className="btn btn--primary"
-          onClick={() => setIsRunning((running) => !running)}
+          onClick={handleToggleRun}
           disabled={coreReady === false}
         >
           {isRunning ? 'Pausar' : 'Iniciar'}
