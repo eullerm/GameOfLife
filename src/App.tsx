@@ -13,6 +13,7 @@ const MIN_INTERVAL_MS = 100;
 const MAX_INTERVAL_MS = 2000;
 const INTERVAL_STEP_MS = 100;
 const STABILIZE_STEPS = 500;
+const HISTORY_SIZE = 4;
 
 // 0: Morta, 1: Viva, 2: Zumbi
 function emptyGrid(rows: number, columns: number): CellState[][] {
@@ -38,6 +39,8 @@ function App() {
   // Mantém a última matriz à mão para o loop de reprodução não depender do estado do React
   const cellsRef = useRef(cells);
   const busyRef = useRef(false);
+  // Últimos estados serializados para detectar ciclos (ex.: blinker 3x1 <-> 1x3)
+  const historyRef = useRef<string[]>([]);
 
   useEffect(() => {
     cellsRef.current = cells;
@@ -53,19 +56,50 @@ function App() {
     };
   }, []);
 
+  const resetHistory = useCallback(() => {
+    historyRef.current = [];
+  }, []);
+
   const runSteps = useCallback(async (steps: number) => {
     if (busyRef.current) return;
     busyRef.current = true;
     try {
-      const result = await coreTransport.run(cellsRef.current, steps);
-      setCells(result.cells);
-      setGeneration((current) => current + (result.stabilized ? result.iterationsUntilStable : steps));
-      if (result.stabilized) {
-        setMessage(`Estabilizou em ${result.iterationsUntilStable} iteração(ões).`);
-        setIsRunning(false);
-      } else {
-        setMessage('');
+      let current = cellsRef.current;
+      let applied = 0;
+      let finalMessage = '';
+
+      // Garante que o histórico termina no estado atual (janela das últimas HISTORY_SIZE gerações)
+      const history = historyRef.current;
+      const currentKey = JSON.stringify(current);
+      if (history[history.length - 1] !== currentKey) {
+        history.push(currentKey);
+        if (history.length > HISTORY_SIZE) history.shift();
       }
+
+      for (let i = 0; i < steps; i += 1) {
+        const result = await coreTransport.run(current, 1);
+        if (result.stabilized) {
+          finalMessage = `Estabilizou em ${applied} iteração(ões).`;
+          break;
+        }
+        current = result.cells;
+        applied += 1;
+
+        const key = JSON.stringify(current);
+        const repeatedIndex = history.lastIndexOf(key);
+        if (repeatedIndex >= 0) {
+          const period = history.length - repeatedIndex;
+          finalMessage = `Repetição detectada: o tabuleiro voltou a um estado de ${period} geração(ões) atrás.`;
+          break;
+        }
+        history.push(key);
+        if (history.length > HISTORY_SIZE) history.shift();
+      }
+
+      setCells(current);
+      setGeneration((count) => count + applied);
+      setMessage(finalMessage);
+      if (finalMessage) setIsRunning(false);
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
       setMessage(`Erro ao falar com o motor Haskell: ${detail}`);
@@ -84,6 +118,7 @@ function App() {
   }, [isRunning, intervalMs, runSteps]);
 
   const handleToggle = useCallback((row: number, column: number) => {
+    resetHistory();
     setCells((current) =>
       current.map((line, r) =>
         r !== row
@@ -91,9 +126,10 @@ function App() {
           : line.map((state, c) => (c !== column ? state : (((state + 1) % 3) as CellState))),
       ),
     );
-  }, []);
+  }, [resetHistory]);
 
   const handleClear = () => {
+    resetHistory();
     setCells(emptyGrid(cells.length, cells[0]?.length ?? 0));
     setGeneration(0);
     setMessage('');
@@ -115,6 +151,7 @@ function App() {
       return;
     }
     setCells((current) => resizeGrid(current, rows, columns));
+    resetHistory();
     setGeneration(0);
     setMessage('');
     setIsRunning(false);
