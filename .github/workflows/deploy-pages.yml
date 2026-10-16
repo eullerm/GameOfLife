@@ -1,4 +1,4 @@
-﻿name: Deploy no GitHub Pages
+name: Deploy no GitHub Pages
 
 on:
   push:

@@ -115,7 +115,7 @@ Não precisa de backend: o `.wasm` já vem versionado em `public/gameoflife.{was
 
 ## Núcleo em WebAssembly
 
-O binário `public/gameoflife.wasm` e o glue `public/gameoflife.js` são gerados a partir do Haskell por `core-haskell/wasm/build.sh`, que usa o backend wasm do GHC (`wasm32-wasi-ghc`, do [ghc-wasm-meta](https://gitlab.haskell.org/ghc/ghc-wasm-meta)) num alvo WASI *reactor*, com o JavaScript FFI exportando `runSteps`.
+O binário `public/gameoflife.wasm` e o glue `public/gameoflife.js` são gerados a partir do Haskell por `core-haskell/wasm/build.sh`, que usa o backend wasm do GHC (`wasm32-wasi-ghc`, do [ghc-wasm-meta](https://gitlab.haskell.org/ghc/ghc-wasm-meta)) num alvo WASI _reactor_, com o JavaScript FFI exportando `runSteps`.
 
 O build exige Linux/WSL2 com o toolchain `~/.ghc-wasm` instalado (não há suporte no host Windows):
 
